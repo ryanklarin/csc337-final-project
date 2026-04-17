@@ -1,0 +1,145 @@
+<html>
+    <head>
+        <title>Blockbuster</title>
+
+        <style>
+            .header {
+                background-color: #0E3FA9;
+                padding: 20px 20px;
+                text-align: center;
+            }
+
+            .header h1 {
+                color: #FFA903;
+                font-size: 60px;
+                font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+            }
+
+            .login {
+                background-color: white;
+                text-align: center;
+                padding: 40px 70px;
+                border-radius: 0 0 15px 15px;
+            }
+
+            .form-group {
+                margin-bottom: 25px;
+                text-align: left;
+            }
+
+            .input-wrapper {
+                display: flex;
+                justify-content: center;
+            }
+
+            label {
+                display: block;
+                margin-bottom: 8px;
+                margin-left: 35%;
+                color: #333;
+                font-weight: 600;
+                font-size: 14px;
+                font-family: sans-serif;
+            }
+
+            input {
+                width: 30%;
+                padding: 12px 15px;
+                border: 2px solid black;
+                border-radius: 10px;
+                font-size: 16px;
+            }
+
+            button {
+                width: 15%;
+                padding: 14px;
+                background-color: #0E3FA9;
+                color: white;
+                border: none;
+                border-radius: 10px;
+                font-size: 16px;
+                font-family: sans-serif;
+                cursor: pointer;
+            }
+
+            #register-link {
+                font-family: sans-serif;
+                font-size: 12px;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="header">
+            <h1>BLOCKBUSTER</h1>
+        </div>
+
+        <div class="login">
+            <form id="login-form">
+                <div class="form-group">
+                    <label for="username">Username</label>
+                    <div class="input-wrapper">
+                        <input type="text" id="username" name="username" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <div class="input-wrapper">
+                        <input type="password" id="password" name="password" required>
+                    </div>
+                </div>
+
+                <button type="submit">Login</button>
+
+                <div id="errorMessage"></div>
+            </form>
+
+            <div id="register-link">
+                Don't have an account? <a href="register.html">Register Here</a>
+            </div>
+        </div>
+
+        <script>
+            document.getElementById('login-form').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                
+                const username = document.getElementById('username').value.trim();
+                const password = document.getElementById('password').value;
+                const errorDiv = document.getElementById('errorMessage');
+                
+                // Clear previous error
+                errorDiv.style.display = 'none';
+                errorDiv.textContent = '';
+                
+                if (!username || !password) {
+                    errorDiv.textContent = 'Please enter both username and password';
+                    errorDiv.style.display = 'block';
+                    return;
+                }
+                
+                try {
+                    const response = await fetch('/api/login', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ username, password })
+                    });
+                    
+                    const data = await response.json();
+                    
+                    if (response.ok) {
+                        window.location.href = '/home.html';
+                    } else {
+                        errorDiv.textContent = data.error || 'Login failed. Please try again.';
+                        errorDiv.style.display = 'block';
+                    }
+                } catch (error) {
+                    errorDiv.textContent = 'Network error. Make sure the server is running.';
+                    errorDiv.style.display = 'block';
+                    console.error('Login error:', error);
+                }
+            });
+        </script>
+    </body>
+</html>

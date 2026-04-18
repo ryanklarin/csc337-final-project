@@ -1,0 +1,200 @@
+<html>
+    <head>
+        <title>Blockbuster</title>
+
+        <style>
+            .header {
+                background-color: #0E3FA9;
+                padding: 20px 20px;
+                text-align: center;
+            }
+
+            .header h1 {
+                color: #FFA903;
+                font-size: 60px;
+                font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+            }
+
+            .register {
+                background-color: white;
+                text-align: center;
+                padding: 40px 70px;
+                border-radius: 0 0 15px 15px;
+            }
+
+            .form-group {
+                margin-bottom: 25px;
+                text-align: left;
+            }
+
+            .input-wrapper {
+                display: flex;
+                justify-content: center;
+            }
+
+            label {
+                display: block;
+                margin-bottom: 8px;
+                margin-left: 35%;
+                color: #333;
+                font-weight: 600;
+                font-size: 14px;
+                font-family: sans-serif;
+            }
+
+            input {
+                width: 30%;
+                padding: 12px 15px;
+                border: 2px solid black;
+                border-radius: 10px;
+                font-size: 16px;
+            }
+
+            button {
+                width: 15%;
+                padding: 14px;
+                background-color: #0E3FA9;
+                color: white;
+                border: none;
+                border-radius: 10px;
+                font-size: 16px;
+                font-family: sans-serif;
+                cursor: pointer;
+            }
+
+        </style>
+    </head>
+    <body>
+        <div class="header">
+            <h1>BLOCKBUSTER</h1>
+        </div>
+
+        <div class="register">
+            <form id="register-form">
+                <div class="form-group">
+                    <label for="username">Username</label>
+                    <div class="input-wrapper">
+                        <input type="text" id="username" name="username" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <div class="input-wrapper">
+                        <input type="password" id="password" name="password" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="confirmPassword"> Confirm Password</label>
+                    <div class="input-wrapper">
+                        <input type="password" id="confirmPassword" name="confirmPassword" required>
+                    </div>
+                </div>
+
+                <button type="submit">Register</button>
+
+                <div id="errorMessage"></div>
+            </form>
+        </div>
+
+        <script>
+
+            // saves user to JSON file via server
+            async function saveUserToFile(userData) {
+                try {
+                    const response = await fetch('/api/register', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(userData)
+                    });
+                    
+                    return await response.json();
+                } catch (error) {
+                    console.error('Error saving user:', error);
+                    throw error;
+                }
+            }
+
+            // check if username already exists
+            async function checkUserExists(username) {
+                try {
+                    const response = await fetch(`/api/check-user/${username}`);
+                    const data = await response.json();
+                    return data.exists;
+                } catch (error) {
+                    console.error('Error checking user:', error);
+                    return false;
+                }
+            }
+
+            // when register is clicked, add user if valid
+            document.getElementById('register-form').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                
+                // get form values
+                const username = document.getElementById('username').value.trim();
+                const password = document.getElementById('password').value;
+                const confirmPassword = document.getElementById('confirmPassword').value;
+                
+                // Clear previous messages
+                const errorDiv = document.getElementById('errorMessage');
+                errorDiv.style.display = 'none';
+                errorDiv.textContent = '';
+                
+                // Validation checks
+                if (!username || !password || !confirmPassword) {
+                    errorDiv.textContent = 'Please fill in all fields';
+                    errorDiv.style.display = 'block';
+                    return;
+                }
+                
+                // Check if passwords match
+                if (password !== confirmPassword) {
+                    errorDiv.textContent = 'Passwords do not match!';
+                    errorDiv.style.display = 'block';
+                    return;
+                }
+                
+                try {
+                    // Check if username already exists
+                    const exists = await checkUserExists(username);
+                    if (exists) {
+                        errorDiv.textContent = 'Username already exists. Please choose another one.';
+                        errorDiv.style.display = 'block';
+                        return;
+                    }
+                    
+                    // Create user object
+                    const userData = {
+                        username: username,
+                        password: password,
+                        rentalHistory: []
+                    };
+                    
+                    // Save to file via server
+                    const result = await saveUserToFile(userData);
+                    
+                    if (result.success) {
+                        // Clear form
+                        document.getElementById('register-form').reset();
+                        
+                        // Redirect to login page
+                        setTimeout(() => {
+                            window.location.href = 'login.html';
+                        }, 500);
+                    } else {
+                        errorDiv.textContent = result.error || 'Registration failed. Please try again.';
+                        errorDiv.style.display = 'block';
+                    }
+                } catch (error) {
+                    errorDiv.textContent = 'Network error. Please make sure the server is running.';
+                    errorDiv.style.display = 'block';
+                    console.error('Registration error:', error);
+                }
+            });
+        </script>
+    </body>
+</html>

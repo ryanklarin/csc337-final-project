@@ -1,0 +1,14 @@
+[
+  {
+    "id": "1776458921859",
+    "username": "Bob",
+    "password": "123",
+    "rentalHistory": []
+  },
+  {
+    "id": "1776459036815",
+    "username": "Jane",
+    "password": "456",
+    "rentalHistory": []
+  }
+]

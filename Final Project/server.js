@@ -172,6 +172,74 @@ app.get('/api/verify-session', (req, res) => {
     }
 });
 
+// Logout
+app.post('/api/logout', (req, res) => {
+    req.session.destroy((err) => {
+        if (err) {
+            console.error('Logout error:', err);
+            return res.status(500).json({ error: 'Logout failed' });
+        }
+        
+        // Clear cookies
+        res.clearCookie('connect.sid');
+        
+        // Send success response
+        res.json({ success: true, message: 'Logged out successfully' });
+    });
+});
+
+// Change Password
+app.post('/api/change-password', async (req, res) => {
+    try {
+        // Check if user is logged in
+        if (!req.session.userId) {
+            return res.status(401).json({ error: 'Not logged in' });
+        }
+        
+        const { currentPassword, newPassword } = req.body;
+        
+        if (!currentPassword || !newPassword) {
+            return res.status(400).json({ error: 'All fields are required' });
+        }
+        
+        const users = await readUsers();
+        const userIndex = users.findIndex(u => u.id === req.session.userId);
+        
+        if (userIndex === -1) {
+            return res.status(404).json({ error: 'User not found' });
+        }
+        
+        // Verify current password
+        if (users[userIndex].password !== currentPassword) {
+            return res.status(401).json({ error: 'Current password is incorrect' });
+        }
+        
+        // Check if new password is same as old password
+        if (currentPassword === newPassword) {
+            return res.status(400).json({ error: 'New password must be different from current password' });
+        }
+        
+        // Update the password
+        users[userIndex].password = newPassword;
+        
+        await writeUsers(users);
+        
+        req.session.user = {
+            id: users[userIndex].id,
+            username: users[userIndex].username
+        };
+        
+        res.json({ 
+            success: true, 
+            message: 'Password changed successfully' 
+        });
+        
+    } catch (error) {
+        console.error('Password change error:', error);
+        res.status(500).json({ error: 'Failed to change password. Please try again.' });
+    }
+});
+
 // Serve HTML
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'login.html'));
@@ -187,6 +255,10 @@ app.get('/register.html', (req, res) => {
 
 app.get('/home.html', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'home.html'));
+});
+
+app.get('/user-profile.html', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'user-profile.html'));
 });
 
 // Start server

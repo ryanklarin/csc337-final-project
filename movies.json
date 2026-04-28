@@ -1,0 +1,11 @@
+[
+    {"id": 1, "title": "The Dark Knight", "price": "9.99", "genre": "Action", "image": "https://upload.wikimedia.org/wikipedia/en/thumb/1/1c/The_Dark_Knight_%282008_film%29.jpg/250px-The_Dark_Knight_%282008_film%29.jpg"},
+    {"id": 2, "title": "Lord of the Rings Trilogy", "price": "34.99", "genre": "Fantasy", "image": "https://upload.wikimedia.org/wikipedia/en/f/fb/Lord_Rings_Fellowship_Ring.jpg"},
+    {"id": 3, "title": "Star Wars Original Trilogy", "price": "29.99", "genre":"Sci-Fi", "image": "https://upload.wikimedia.org/wikipedia/en/8/87/StarWarsMoviePoster1977.jpg"},
+    {"id": 4, "title": "The Avengers", "price": "9.99", "genre": "Action", "image": "https://upload.wikimedia.org/wikipedia/en/8/8a/The_Avengers_%282012_film%29_poster.jpg"},
+    {"id": 5, "title": "Avatar", "price": "11.99", "genre": "Fantasy", "image": "https://upload.wikimedia.org/wikipedia/en/d/d6/Avatar_%282009_film%29_poster.jpg"},
+    {"id": 6, "title": "Dune", "price": "10.99", "genre":"Sci-Fi", "image": "https://upload.wikimedia.org/wikipedia/en/thumb/8/8e/Dune_%282021_film%29.jpg/250px-Dune_%282021_film%29.jpg"},
+    {"id": 7, "title": "Mission: Impossible Bundle", "price": "64.99", "genre": "Action", "image": "https://upload.wikimedia.org/wikipedia/en/e/e1/MissionImpossiblePoster.jpg"},
+    {"id": 8, "title": "Pirates of the Caribbean Bundle", "price": "54.99", "genre": "Fantasy", "image": "https://m.media-amazon.com/images/M/MV5BNDhlMzEyNzItMTA5Mi00YWRhLThlNTktYTQyMTA0MDIyNDEyXkEyXkFqcGc@._V1_FMjpg_UX1000_.jpg"},
+    {"id": 9, "title": "Terminator 2", "price": "9.99", "genre":"Sci-Fi", "image": "https://upload.wikimedia.org/wikipedia/en/thumb/5/5e/Terminator_2-Judgment_Day.png/250px-Terminator_2-Judgment_Day.png"}
+]

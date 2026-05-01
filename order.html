@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html>
+    <script>
+        function processOrder(e, url) {
+            e.preventDefault()
+            vccn = validateCCN()
+            vccv = validateCCV()
+            vexp = validateEXP()
+            vzip = validateZIP()
+            if (!(vccn && vccv && vexp && vzip)) {
+                return
+            }
+            sendReq(url)
+        }
+
+        function validateCCN() {
+            number = document.getElementById("cardNumber").value
+            if (!isNaN(Number(number)) && number.length == 16) {
+                document.getElementById("ccnERR").innerText = ""
+                return true
+            }
+            document.getElementById("ccnERR").innerText = "Invalid Card Number"
+            return false
+        }
+
+        function validateCCV() {
+            number = document.getElementById("ccv").value
+            if (!isNaN(Number(number)) && number.length == 3) {
+                document.getElementById("ccvERR").innerText = ""
+                return true
+            }
+            document.getElementById("ccvERR").innerText = "Invalid Security Code"
+            return false
+        }
+
+        function validateEXP() {
+            date = document.getElementById("expDate").value.split("/")
+            if (date.length == 2 && date[0].length == 2 && date[1].length == 2 && Number(date[0]) <= 12 && Number(date[0]) >= 1 && !isNaN(Number(date[1]))) {
+                document.getElementById("expERR").innerText = ""
+                return true
+            }
+            document.getElementById("expERR").innerText = "Invalid Date"
+            return false
+        }
+
+        function validateZIP() {
+            zip = document.getElementById("zip").value
+            if (!isNaN(Number(zip)) && zip.length == 5) {
+                document.getElementById("zipERR").innerText = ""
+                return true
+            }
+            document.getElementById("zipERR").innerText = "Invalid ZIP"
+            return false
+        }
+
+        function sendReq(url){
+            shippings = document.getElementsByName("shipping")
+            for (var i = 0; i < shippings.length; i++) {
+                if (shippings[i].checked) {
+                    var shipping = shippings[i].value
+                    break
+                }
+            }
+            var body = {
+                "movie":document.getElementsByName("movie")[0].value,
+                "shipping":shipping,
+                "ccn":document.getElementsByName("cardNumber")[0].value,
+                "ccv":document.getElementsByName("ccv")[0].value,
+                "expDate":document.getElementsByName("expDate")[0].value,
+                "addressLine":document.getElementsByName("addressLine")[0].value,
+                "city":document.getElementsByName("city")[0].value,
+                "state":document.getElementsByName("state")[0].value,
+                "zip":document.getElementsByName("zip")[0].value
+            }
+            fetch(url, {
+                "method":"post",
+                "headers":{"Content-Type":"application/json"},
+                "body":JSON.stringify(body) 
+            })
+            .then(function (res){
+                return res.text()
+            })
+            .then(function (text){
+                document.open()
+                document.write(text)
+                document.close()
+            })
+            .catch(function (err){
+                console.log(err)
+            })
+        }
+    </script>
+    <body>
+        <h1>Checkout</h1>
+        <form method="post" onsubmit="processOrder(event, '/orderACTION')">
+            <h3>Movie</h3>
+            <div id="movies"></div>
+            <!--
+            <label for="movie">Enter Movie Name:</label>
+            <select id="movie" name="movie" required>
+                <option value="" disabled selected>Choose</option>
+                <option value="movie1">Movie 1</option>
+                <option value="movie2">Movie 2</option>
+                <option value="movie3">Movie 3</option>
+                <option value="movie4">Movie 4</option>
+                <option value="movie5">Movie 5</option>
+                <option value="movie6">Movie 6</option>
+                <option value="movie7">Movie 7</option>
+                <option value="movie8">Movie 8</option>
+                <option value="movie9">Movie 9</option>
+            </select><br><br>
+            -->
+            <h3>Shipping</h3>
+            <label for="oneDay">One Day Shipping - $9.99</label>
+            <input type="radio" id="oneDay" name="shipping" value="oneDay"><br>
+            <label for="threeDay">Three Day Shipping - $3.99</label>
+            <input type="radio" id="threeDay" name="shipping" value="threeDay"><br>
+            <label for="oneWeek">One Week Shipping - Free</label>
+            <input type="radio" id="oneWeek" name="shipping" value="oneWeek" checked><br><br>
+            <h3>Payment</h3>
+            <label for="cardNumber">Credit Card Number:</label>
+            <input type="text" id="cardNumber" name="cardNumber" placeholder="XXXX XXXX XXXX XXXX"><span id="ccnERR"></span><br>
+            <label for="ccv">CCV:</label>
+            <input type="text" id="ccv" name="ccv" placeholder="XXX"><span id="ccvERR"></span><br>
+            <label for="expDate">Expiration Date:</label>
+            <input type="text" id="expDate" name="expDate" placeholder="MM/DD"><span id="expERR"></span>
+            <h3>Address</h3>
+            <label for="addressLine">Address: </label>
+            <input type="text" id="addressLine" name="addressLine"><br>
+            <label for="city">City:</label>
+            <input type="text" id="city" name="city">
+            <label for="state">State:</label>
+            <select name="state">
+                <option value="" disabled selected>Choose</option>
+                <option value="AL">AL</option><option value="AK">AK</option><option value="AZ">AZ</option><option value="AR">AR</option><option value="CA">CA</option>
+                <option value="CO">CO</option><option value="CT">CT</option><option value="DE">DE</option><option value="FL">FL</option><option value="GA">GA</option>
+                <option value="HI">HI</option><option value="ID">ID</option><option value="IL">IL</option><option value="IN">IN</option><option value="IA">IA</option>
+                <option value="KS">KS</option><option value="KY">KY</option><option value="LA">LA</option><option value="ME">ME</option><option value="MD">MD</option>
+                <option value="MA">MA</option><option value="MI">MI</option><option value="MN">MN</option><option value="MS">MS</option><option value="MO">MO</option>
+                <option value="MT">MT</option><option value="NE">NE</option><option value="NV">NV</option><option value="NH">NH</option><option value="NJ">NJ</option>
+                <option value="NM">NM</option><option value="NY">NY</option><option value="NC">NC</option><option value="ND">ND</option><option value="OH">OH</option>
+                <option value="OK">OK</option><option value="OR">OR</option><option value="PA">PA</option><option value="RI">RI</option><option value="SC">SC</option>
+                <option value="SD">SD</option><option value="TN">TN</option><option value="TX">TX</option><option value="UT">UT</option><option value="VT">VT</option>
+                <option value="VA">VA</option><option value="WA">WA</option><option value="WV">WV</option><option value="WI">WI</option><option value="WY">WY</option>
+            </select>
+            <label for="zip">Zip:</label>
+            <input type="text" id="zip" name="zip"><span id="zipERR"></span><br><br><br>
+            <input type="submit">
+        </form>
+    </body>
+</html>

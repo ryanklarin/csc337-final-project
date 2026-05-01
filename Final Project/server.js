@@ -261,6 +261,18 @@ app.get('/user-profile.html', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'user-profile.html'));
 });
 
+app.get('/movies', function(req, res) {
+    res.sendFile(path.join(__dirname, "movies.html"))
+})
+
+app.get('/movies-json', function(req, res) {
+    res.sendFile(path.join(__dirname, "movies.json"))
+})
+
+app.post('/cart', function(req, res) {
+    console.log("Movie added to cart")
+})
+
 // Start server
 app.listen(PORT, () => {
     console.log(`Server running at http://localhost:${PORT}`);

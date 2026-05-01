@@ -25,10 +25,19 @@
                 padding: 30px;
                 text-align: center;
             }
+
+            #link {
+                text-align: center;
+                margin-bottom: 10px;
+            }
+            
         </style>
 
         <script>
             function randomColor() {
+                if (window.localStorage.getItem("cart") == null) {
+                    window.localStorage.setItem("cart", "[]")
+                }
                 var body = document.getElementsByTagName('body')[0]
                 var r = Math.random()*255
                 var g = Math.random()*255
@@ -41,6 +50,10 @@
     <body onload="randomColor(); buildTable()">
         <h1>Welcome to Blockbuster!</h1>
         <p>Here is our list of movies:</p>
+        <div id="link">
+            <a href="/order" style="font-size: 20px">Proceed to Checkout</a>
+        </div>
+        
 
         <table>
             <tr>
@@ -70,7 +83,7 @@
                              width="200px"
                              height="300px">
                         <p>${movies[i].title} : ${movies[i].price}</p>
-                        <button type="button" onclick="addToCart(${movies[i].title})">Add to Cart</button>
+                        <button type="button" onclick="addToCart('${movies[i].title}')">Add to Cart</button>
                         `
                         tr.appendChild(td)
                     }
@@ -85,7 +98,7 @@
                              width="200px"
                              height="300px">
                         <p>${movies[i].title} : ${movies[i].price}</p>
-                        <button type="button" onclick="addToCart(${movies[i].title})">Add to Cart</button>
+                        <button type="button" onclick="addToCart('${movies[i].title}')">Add to Cart</button>
                         `
                         tr.appendChild(td)
                     }
@@ -100,7 +113,7 @@
                              width="200px"
                              height="300px">
                         <p>${movies[i].title} : ${movies[i].price}</p>
-                        <button type="button" onclick="addToCart(${movies[i].title})">Add to Cart</button>
+                        <button type="button" onclick="addToCart('${movies[i].title}')">Add to Cart</button>
                         `
                         tr.appendChild(td)
                     }
@@ -113,20 +126,11 @@
             
 
             function addToCart(movie) {
-                fetch('/cart', {
-                    "method":"post",
-                    "headers":{"Content-Type":"application/json"},
-                    "body":JSON.stringify(movie)
-                })
-                .then(function(res) {
-                    return res.json()
-                })
-                .then(function(data) {
-                    alert("Movie has been added to cart!")
-                })
-                .catch(function(err) {
-                    console.log(err)
-                })
+                var cart = JSON.parse(localStorage.getItem("cart"))
+                cart.push(movie)
+                cart = JSON.stringify(cart)
+                console.log(cart)
+                localStorage.setItem("cart", cart)
             }
         </script>
     </body>
